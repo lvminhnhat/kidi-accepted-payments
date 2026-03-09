@@ -3,7 +3,7 @@
  * Plugin Name: KIDI Accepted Payments
  * Plugin URI:  https://customizedpajamas.com
  * Description: Display accepted payment method icons (Visa, Mastercard, Amex, PayPal, Apple Pay, Google Pay) in the site footer. Fully configurable via Appearance → Customize → Accepted Payments.
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      KIDI CUSTOM LLC
  * Author URI:  https://customizedpajamas.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KIDI_AP_VERSION', '1.1.0' );
+define( 'KIDI_AP_VERSION', '1.2.0' );
 define( 'KIDI_AP_FILE', __FILE__ );
 define( 'KIDI_AP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KIDI_AP_URL', plugin_dir_url( __FILE__ ) );
