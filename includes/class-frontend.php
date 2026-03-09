@@ -83,7 +83,7 @@ class Kidi_AP_Frontend {
                 <?php endforeach; ?>
             </div>
         </div>
-        <script>
+        <script data-no-optimize="1">
         (function(){
             var src = document.getElementById('kidi-ap-source');
             if (!src) return;
@@ -101,7 +101,7 @@ class Kidi_AP_Frontend {
             if (target) {
                 target.appendChild(badge);
             } else {
-                /* Absolute fallback: show before </body>. */
+                /* Absolute fallback: show in place. */
                 src.style.display = '';
                 return;
             }
