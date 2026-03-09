@@ -3,7 +3,8 @@
  * Customizer integration for Accepted Payments.
  *
  * Adds a panel at Appearance → Customize → Accepted Payments
- * with toggle controls for each payment method and a label field.
+ * with an auto-sync toggle (WooCommerce), toggle controls for
+ * each payment method, and a label field.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -36,6 +37,39 @@ class Kidi_AP_Customizer {
             'priority' => 200,
         ) );
 
+        // ── Auto-sync toggle ─────────────────────────────────
+        $auto_desc = __( 'Automatically detect payment icons from your active WooCommerce payment gateways.', 'kidi-accepted-payments' );
+
+        if ( Kidi_AP_Woo_Sync::is_woo_active() ) {
+            $detected = Kidi_AP_Woo_Sync::detect();
+            $gw_names = Kidi_AP_Woo_Sync::active_gateway_names();
+            if ( ! empty( $gw_names ) ) {
+                $auto_desc .= ' ' . sprintf(
+                    /* translators: %1$s: gateway names, %2$s: detected method names */
+                    __( 'Detected gateways: %1$s → Icons: %2$s.', 'kidi-accepted-payments' ),
+                    implode( ', ', $gw_names ),
+                    implode( ', ', array_map( function( $k ) { $labels = Kidi_AP_Icons::labels(); return $labels[ $k ] ?? $k; }, $detected ) )
+                );
+            }
+        } else {
+            $auto_desc .= ' ' . __( 'WooCommerce is not active — using manual toggles below.', 'kidi-accepted-payments' );
+        }
+
+        $wp_customize->add_setting( self::OPTION . '[auto_sync]', array(
+            'type'              => 'option',
+            'default'           => true,
+            'sanitize_callback' => array( __CLASS__, 'sanitize_boolean' ),
+            'transport'         => 'refresh',
+        ) );
+
+        $wp_customize->add_control( self::OPTION . '[auto_sync]', array(
+            'label'       => __( 'Auto-sync with WooCommerce', 'kidi-accepted-payments' ),
+            'description' => $auto_desc,
+            'section'     => 'kidi_ap_section',
+            'type'        => 'checkbox',
+            'priority'    => 5,
+        ) );
+
         // ── Label setting ─────────────────────────────────────
         $wp_customize->add_setting( self::OPTION . '[label]', array(
             'type'              => 'option',
@@ -51,7 +85,7 @@ class Kidi_AP_Customizer {
             'type'    => 'text',
         ) );
 
-        // ── Toggle for each payment method ────────────────────
+        // ── Toggle for each payment method (manual mode) ─────
         $labels = Kidi_AP_Icons::labels();
         $priority = 20;
 
@@ -100,6 +134,7 @@ class Kidi_AP_Customizer {
      */
     public static function get_settings() {
         $defaults = array(
+            'auto_sync'  => true,
             'label'      => 'We Accept',
             'visa'       => true,
             'mastercard' => true,

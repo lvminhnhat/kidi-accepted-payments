@@ -44,11 +44,23 @@ class Kidi_AP_Frontend {
         $methods  = Kidi_AP_Icons::labels();
         $label    = $settings['label'] ?? '';
 
-        // Build list of active icons.
+        // Determine which icons to show.
         $active = array();
-        foreach ( $methods as $key => $name ) {
-            if ( ! empty( $settings[ $key ] ) ) {
-                $active[ $key ] = $name;
+
+        if ( ! empty( $settings['auto_sync'] ) && Kidi_AP_Woo_Sync::is_woo_active() ) {
+            // Auto-sync mode: icons from active WooCommerce gateways.
+            $detected = Kidi_AP_Woo_Sync::detect();
+            foreach ( $detected as $key ) {
+                if ( isset( $methods[ $key ] ) ) {
+                    $active[ $key ] = $methods[ $key ];
+                }
+            }
+        } else {
+            // Manual mode: use Customizer toggles.
+            foreach ( $methods as $key => $name ) {
+                if ( ! empty( $settings[ $key ] ) ) {
+                    $active[ $key ] = $name;
+                }
             }
         }
 

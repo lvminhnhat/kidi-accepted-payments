@@ -3,7 +3,7 @@
  * Plugin Name: KIDI Accepted Payments
  * Plugin URI:  https://customizedpajamas.com
  * Description: Display accepted payment method icons (Visa, Mastercard, Amex, PayPal, Apple Pay, Google Pay) in the site footer. Fully configurable via Appearance → Customize → Accepted Payments.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      KIDI CUSTOM LLC
  * Author URI:  https://customizedpajamas.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KIDI_AP_VERSION', '1.0.0' );
+define( 'KIDI_AP_VERSION', '1.1.0' );
 define( 'KIDI_AP_FILE', __FILE__ );
 define( 'KIDI_AP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KIDI_AP_URL', plugin_dir_url( __FILE__ ) );
@@ -28,6 +28,7 @@ add_action( 'plugins_loaded', 'kidi_ap_init' );
 
 function kidi_ap_init() {
     require_once KIDI_AP_DIR . 'includes/class-icons.php';
+    require_once KIDI_AP_DIR . 'includes/class-woo-sync.php';
     require_once KIDI_AP_DIR . 'includes/class-customizer.php';
     require_once KIDI_AP_DIR . 'includes/class-frontend.php';
 
@@ -43,6 +44,7 @@ function kidi_ap_activate() {
     // Set sensible defaults on first activation.
     if ( false === get_option( 'kidi_ap_settings' ) ) {
         update_option( 'kidi_ap_settings', array(
+            'auto_sync'  => true,
             'label'      => 'We Accept',
             'visa'       => true,
             'mastercard' => true,
@@ -51,8 +53,9 @@ function kidi_ap_activate() {
             'applepay'   => true,
             'googlepay'  => true,
         ) );
-    }
 }
+}
+
 
 /* ── Uninstall ─────────────────────────────────────────────── */
 // Handled via uninstall.php for safety.
